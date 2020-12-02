@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MPEG DASH</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="js/header.js"></script>
+    <script src="js/utils.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-muted">MPEG DASH</h1>
+    <h3 class="text-muted" id="videoUrl"></h3>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <form id='file-catcher'>
+                <input id='file-input' type='file' multiple/>
+                <button type='submit'>
+                    Submit
+                </button>
+            </form>
+            <div id='file-list-display'></div>
+            <button type="submit" onclick="fragment()">Fragment</button>
+            <h4 id='message' style="color: orange"></h4>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    function fragment() {
+        fetch("/api/dash/fragment")
+            .then(response => response.json())
+            .then(json => {
+                let message = document.getElementById('message');
+                message.innerText = json.status
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+    }
+
+    sendFile = function (file) {
+        let formData = new FormData();
+        formData.set('file', file);
+
+        let promise = new Promise((resolve, reject) => {
+            let request = new XMLHttpRequest();
+            request.open("POST", 'api/dash/upload/file');
+            request.onload = (response) => resolve(response.currentTarget.responseText);
+            request.onerror = () => reject(request.statusText);
+            request.send(formData);
+        });
+        promise
+            .then(responseText => {
+                let json = JSON.parse(responseText);
+                let message = document.getElementById('message');
+                message.innerText = json.status
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+    };
+
+
+    docReady(async function () {
+        let fileCatcher = document.getElementById('file-catcher');
+        let fileInput = document.getElementById('file-input');
+        let fileListDisplay = document.getElementById('file-list-display');
+
+        let fileList = [];
+        let renderFileList;
+
+        fileCatcher.addEventListener('submit', function (event) {
+            event.preventDefault();
+            fileList.forEach(function (file) {
+                sendFile(file);
+            });
+        });
+
+        fileInput.addEventListener('change', function (event) {
+            fileList = [];
+            for (let i = 0; i < fileInput.files.length; i++) {
+                fileList.push(fileInput.files[i]);
+            }
+            renderFileList();
+        });
+
+        renderFileList = function () {
+            fileListDisplay.innerHTML = '';
+            fileList.forEach(function (file, index) {
+                let fileDisplayEl = document.createElement('p');
+                fileDisplayEl.innerHTML = (index + 1) + ': ' + file.name;
+                fileListDisplay.appendChild(fileDisplayEl);
+            });
+        };
+
+    });
+
+</script>
+
+</body>
+</html>
