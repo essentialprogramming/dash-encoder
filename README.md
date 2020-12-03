@@ -98,6 +98,8 @@ Index Segments contain ISOBMFF 'sidx' boxes, with information about Media Segmen
 
 The indexRange is the range of bytes within this segment that represents the segment index (the sidx box in the mp4 file) and the Initialization element indicates the range of bytes that includes any relevant initialization data (the various header boxes in the mp4 file)
 
+![MPD model diagram](images/mpd_entities.png)
+
 Links:
 ---------------
 
