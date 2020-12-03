@@ -1,4 +1,4 @@
-package com.api.controller;
+package com.api.model;
 
 import org.springframework.stereotype.Service;
 

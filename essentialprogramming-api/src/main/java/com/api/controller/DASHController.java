@@ -4,7 +4,7 @@ import com.dash.encoder.DASHEncoder;
 import com.dash.fileselector.FileSelector;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.service.UploadService;
+import com.api.service.UploadService;
 import com.web.json.JsonResponse;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;

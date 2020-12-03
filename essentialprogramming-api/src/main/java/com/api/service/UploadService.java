@@ -1,6 +1,6 @@
-package com.service;
+package com.api.service;
 
-import com.api.controller.InMemoryFileHolder;
+import com.api.model.InMemoryFileHolder;
 import com.util.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -12,7 +12,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
 import java.util.Queue;
 
 @Service
