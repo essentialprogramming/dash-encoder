@@ -22,7 +22,7 @@ Run
 ---------------
 Step 1 - Start the Server
 ---------------
- java -jar essentialprogramming-dash-fragmenter.jar
+ `java -jar essentialprogramming-dash-fragmenter.jar`
  
 Step 2 - Upload audio/video files
 ---------------
