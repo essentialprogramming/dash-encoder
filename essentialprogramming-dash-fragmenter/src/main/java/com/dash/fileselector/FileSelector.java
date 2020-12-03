@@ -23,7 +23,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.dash.util.DashHelper.getTextTrackLocale;
 
 
 /**
@@ -35,8 +34,8 @@ public class FileSelector {
 
     public static final List<Track> TEXT_TRACKS = new ArrayList<>();
     public static final List<Track> THUMB_TRACKS = new ArrayList<>();
-    private List<Track> tracks = new ArrayList<>();
-    private List<File> files;
+    private final List<Track> tracks = new ArrayList<>();
+    private final List<File> files;
 
 
     private static final Set<String> MP4_FILE_EXTENSIONS = new HashSet<>(Arrays.asList("mp4", "m4a", "m4v", "ismv", "isma", "mov"));
@@ -155,18 +154,6 @@ public class FileSelector {
                 }
                 a.getTrackMetaData().setLanguage(lang);
                 tracks.add(a);
-            } else if (TEXT_FILE_EXTENSIONS.contains(fileExtension)) {
-                tracks = TEXT_TRACKS;
-                if (!outputOptions.containsKey("lang")) {
-                    outputOptions.put("lang", getTextTrackLocale(file).toLanguageTag());
-                }
-            } else if (THUMB_FILE_EXTENSIONS.contains(fileExtension)) {
-                tracks = THUMB_TRACKS;
-
-                List<File> sortedFiles = new ArrayList<>(files);
-                sortedFiles.sort(new WindowsExplorerComparator());
-                this.files = sortedFiles;
-                break;
             } else {
                 throw new IllegalArgumentException("File Extension of " + file + " unknown");
             }
@@ -189,65 +176,6 @@ public class FileSelector {
     static {
         handlerToType.put("soun", "audio");
         handlerToType.put("vide", "video");
-    }
-
-    public static class WindowsExplorerComparator implements Comparator<File> {
-
-        private static final Pattern splitPattern = Pattern.compile("\\d+|\\.|\\s");
-
-        @Override
-        public int compare(File f1, File f2) {
-            String str1 = f1.getName();
-            String str2 = f2.getName();
-            Iterator<String> i1 = splitStringPreserveDelimiter(str1).iterator();
-            Iterator<String> i2 = splitStringPreserveDelimiter(str2).iterator();
-            while (true) {
-                //Til here all is equal.
-                if (!i1.hasNext() && !i2.hasNext()) {
-                    return 0;
-                }
-                //first has no more parts -> comes first
-                if (!i1.hasNext()) {
-                    return -1;
-                }
-                //first has more parts than i2 -> comes after
-                if (!i2.hasNext()) {
-                    return 1;
-                }
-
-                String data1 = i1.next();
-                String data2 = i2.next();
-                int result;
-                try {
-                    //If both datas are numbers, then compare numbers
-                    result = Long.compare(Long.parseLong(data1), Long.parseLong(data2));
-                    //If numbers are equal than longer comes first
-                    if (result == 0) {
-                        result = -Integer.compare(data1.length(), data2.length());
-                    }
-                } catch (NumberFormatException ex) {
-                    //compare text case insensitive
-                    result = data1.compareToIgnoreCase(data2);
-                }
-
-                if (result != 0) {
-                    return result;
-                }
-            }
-        }
-
-        private List<String> splitStringPreserveDelimiter(String str) {
-            Matcher matcher = splitPattern.matcher(str);
-            List<String> list = new ArrayList<>();
-            int pos = 0;
-            while (matcher.find()) {
-                list.add(str.substring(pos, matcher.start()));
-                list.add(matcher.group());
-                pos = matcher.end();
-            }
-            list.add(str.substring(pos));
-            return list;
-        }
     }
 
     private static void validate(File file,  Map<String, String> inputOptions, Map<String, String> outputOptions){
