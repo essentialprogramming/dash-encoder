@@ -22,7 +22,7 @@ Run
 ---------------
 Step 1 - Start the Server
 ---------------
- java -jar uber-essentialprogramming-api-1.0.0-SNAPSHOT.jar
+ java -jar essentialprogramming-dash-fragmenter.jar
  
 Step 2 - Upload audio/video files
 ---------------
