@@ -8,6 +8,7 @@ Prerequisites:
 ---------------
 
 * [java 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+* [maven](https://maven.apache.org/)
 * [ffmpeg](https://www.ffmpeg.org/download.html)
 * [MP4 Parser](https://github.com/sannies/mp4parser/)
 
