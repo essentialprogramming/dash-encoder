@@ -1,7 +1,7 @@
 package com.api.controller;
 
 import com.dash.encoder.DASHEncoder;
-import com.dash.trackoptions.FileSelector;
+import com.dash.fileselector.FileSelector;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.service.UploadService;

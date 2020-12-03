@@ -3,7 +3,7 @@ package com.dash.encoder;
 import com.dash.mp4.Mp4Writer;
 import com.dash.mpd.AdaptationBuilder;
 import com.dash.mpd.RepresentationBuilder;
-import com.dash.trackoptions.FileSelector;
+import com.dash.fileselector.FileSelector;
 import com.dash.mp4.Mp4Representation;
 import com.dash.util.DashHelper;
 import com.util.io.FileUtils;
