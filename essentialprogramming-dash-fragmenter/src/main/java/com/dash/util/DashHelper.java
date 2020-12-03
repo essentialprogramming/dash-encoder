@@ -29,8 +29,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Locale;
