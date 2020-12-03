@@ -63,8 +63,8 @@ public class RepresentationUtil {
     }
 
 
-    public static FrameRate getFrameRate(Track t) {
-        double framesPerSecond = (double) (t.getSamples().size() * t.getTrackMetaData().getTimescale()) / t.getDuration();
+    public static FrameRate getFrameRate(Track track) {
+        double framesPerSecond = (double) (track.getSamples().size() * track.getTrackMetaData().getTimescale()) / track.getDuration();
 
         return convertFramerate(framesPerSecond);
     }
