@@ -15,7 +15,6 @@ import org.mp4parser.boxes.iso14496.part15.HevcConfigurationBox;
 import org.mp4parser.boxes.iso14496.part30.XMLSubtitleSampleEntry;
 import org.mp4parser.boxes.sampleentry.AudioSampleEntry;
 import org.mp4parser.boxes.sampleentry.SampleEntry;
-import org.mp4parser.muxer.Edit;
 import org.mp4parser.muxer.Track;
 import org.mp4parser.tools.Hex;
 import org.mp4parser.tools.Path;
@@ -45,9 +44,9 @@ import java.util.regex.Pattern;
 public final class DashHelper {
 
     public static long getAudioSamplingRate(AudioSampleEntry e) {
-        ESDescriptorBox esds = Path.getPath(e, "esds");
-        if (esds != null) {
-            final DecoderConfigDescriptor decoderConfigDescriptor = esds.getEsDescriptor().getDecoderConfigDescriptor();
+        ESDescriptorBox esDescriptorBox = Path.getPath(e, "esds");
+        if (esDescriptorBox != null) {
+            final DecoderConfigDescriptor decoderConfigDescriptor = esDescriptorBox.getEsDescriptor().getDecoderConfigDescriptor();
             final AudioSpecificConfig audioSpecificConfig = decoderConfigDescriptor.getAudioSpecificInfo();
             if (audioSpecificConfig.getExtensionAudioObjectType() > 0 && audioSpecificConfig.sbrPresentFlag) {
                 return audioSpecificConfig.getExtensionSamplingFrequency();
@@ -57,46 +56,6 @@ public final class DashHelper {
         } else {
             return e.getSampleRate();
         }
-    }
-
-
-
-
-
-    public static double getEarliestTrackPresentationTime(List<Edit> edits) {
-        double earliestTrackPresentationTime = 0;
-        boolean acceptEdit = true;
-        boolean acceptDwell = true;
-        for (Edit edit : edits) {
-            if (edit.getMediaTime() == -1 && !acceptDwell) {
-                throw new RuntimeException("Cannot accept edit list for processing (1)");
-            }
-            if (edit.getMediaTime() >= 0 && !acceptEdit) {
-                throw new RuntimeException("Cannot accept edit list for processing (2)");
-            }
-            if (edit.getMediaTime() == -1) {
-                earliestTrackPresentationTime += edit.getSegmentDuration();
-            } else /* if edit.getMediaTime() >= 0 */ {
-                earliestTrackPresentationTime -= (double) edit.getMediaTime() / edit.getTimeScale();
-                acceptEdit = false;
-                acceptDwell = false;
-            }
-        }
-        return earliestTrackPresentationTime;
-    }
-
-
-
-    /**
-     * Returns the number of frame which correspond to the time given.
-     */
-    public static int time2Frames(Track track, double timeInSeconds) {
-        int i = 0;
-        while (timeInSeconds > 0) {
-            timeInSeconds -= (double) track.getSampleDurations()[i] / track.getTrackMetaData().getTimescale();
-            i++;
-        }
-        return i;
     }
 
 
@@ -332,15 +291,4 @@ public final class DashHelper {
 
     }
 
-    public static String filename2UrlPath(String filename) {
-        URI uri;
-        try {
-            uri = new URI(null,
-                    null, null, -1,
-                    filename, null, null);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        return uri.toASCIIString();
-    }
 }
