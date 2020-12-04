@@ -1,8 +1,5 @@
 package com.dash.util;
 
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.mp4parser.Box;
 import org.mp4parser.Container;
 import org.mp4parser.boxes.dolby.*;
@@ -97,12 +94,11 @@ public final class DashHelper {
                         esDescriptorBox.getEsDescriptor().getDecoderConfigDescriptor().getObjectTypeIndication()
                 );
             }
-        } else if (type.equals("dtsl") || type.equals("dtsl") || type.equals("dtse")) {
+        } else if (type.equals("dtsl") || type.equals("dtse")) {
             return type;
         } else if (type.equals("ec-3") || type.equals("ac-3") || type.equals("mlpa")) {
             return type;
         } else if (type.equals("hev1") || type.equals("hvc1")) {
-            int c;
             HevcConfigurationBox hvcc = Path.getPath((Box) sampleEntry, "hvcC");
 
             String codec = type + ".";
@@ -140,16 +136,16 @@ public final class DashHelper {
 
             long _general_constraint_indicator_flags = hvcc.getGeneral_constraint_indicator_flags();
             if (hvcc.getHevcDecoderConfigurationRecord().isFrame_only_constraint_flag()) {
-                _general_constraint_indicator_flags |= 1l << 47;
+                _general_constraint_indicator_flags |= 1L << 47;
             }
             if (hvcc.getHevcDecoderConfigurationRecord().isNon_packed_constraint_flag()) {
-                _general_constraint_indicator_flags |= 1l << 46;
+                _general_constraint_indicator_flags |= 1L << 46;
             }
             if (hvcc.getHevcDecoderConfigurationRecord().isInterlaced_source_flag()) {
-                _general_constraint_indicator_flags |= 1l << 45;
+                _general_constraint_indicator_flags |= 1L << 45;
             }
             if (hvcc.getHevcDecoderConfigurationRecord().isProgressive_source_flag()) {
-                _general_constraint_indicator_flags |= 1l << 44;
+                _general_constraint_indicator_flags |= 1L << 44;
             }
 
             codec += "." + hexByte(_general_constraint_indicator_flags >> 40);

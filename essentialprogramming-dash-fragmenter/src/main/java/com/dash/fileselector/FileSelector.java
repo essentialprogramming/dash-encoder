@@ -19,8 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 
@@ -32,10 +30,12 @@ public class FileSelector {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSelector.class);
 
+    private final List<File> inputFiles;
+    private final List<Track> tracks = new ArrayList<>();
     public static final List<Track> TEXT_TRACKS = new ArrayList<>();
     public static final List<Track> THUMB_TRACKS = new ArrayList<>();
-    private final List<Track> tracks = new ArrayList<>();
-    private final List<File> files;
+
+
 
 
     private static final Set<String> MP4_FILE_EXTENSIONS = new HashSet<>(Arrays.asList("mp4", "m4a", "m4v", "ismv", "isma", "mov"));
@@ -88,19 +88,19 @@ public class FileSelector {
     }
 
     public FileSelector(String filePattern, Map<String, String> inputOptions, Map<String, String> outputOptions) throws IOException {
-        this.files = FileUtils.getFiles(new File(""), filePattern);
-        if (files.isEmpty()) {
+        this.inputFiles = FileUtils.getFiles(new File(""), filePattern);
+        if (inputFiles.isEmpty()) {
             throw new IllegalArgumentException("The file pattern " + filePattern + " doesn't yield any results.");
         }
 
-        if (files.stream().map(f -> FilenameUtils.getExtension(f.getName()).toLowerCase()).distinct().count() > 1) {
+        if (inputFiles.stream().map(f -> FilenameUtils.getExtension(f.getName()).toLowerCase()).distinct().count() > 1) {
             throw new IllegalArgumentException("The pattern " + filePattern + " includes multiple file types: " +
-                    files.stream().map(f -> FilenameUtils.getExtension(f.getName()).toLowerCase()).distinct().collect(Collectors.joining(", ")) +
+                    inputFiles.stream().map(f -> FilenameUtils.getExtension(f.getName()).toLowerCase()).distinct().collect(Collectors.joining(", ")) +
                     ". All files captured by the pattern need to have the same extension!");
         }
 
 
-        for (File file : files) {
+        for (File file : inputFiles) {
             final String fileExtension = FilenameUtils.getExtension(file.getName()).toLowerCase();
             FileSelector.validate(file, inputOptions, outputOptions);
 
@@ -162,8 +162,8 @@ public class FileSelector {
 
     }
 
-    public List<File> getFiles() {
-        return files;
+    public List<File> getInputFiles() {
+        return inputFiles;
     }
 
     public List<Track> getSelectedTracks() {

@@ -20,7 +20,7 @@ public class AdaptionSetUtil {
         return 10000;
     }
 
-    private static Long adjustMinMax(List<Representation> representations, Function<Representation, Long> get, boolean isMinimum) {
+    private static Long adjustMinMax(List<Representation> representations, Function<Representation, Long> get, boolean needMinimum) {
         long min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
         for (Representation representationType : representations) {
             Long n = get.apply(representationType);
@@ -30,7 +30,7 @@ public class AdaptionSetUtil {
             }
         }
         if (min != Integer.MAX_VALUE && min != max) {
-            return isMinimum ? min : max;
+            return needMinimum ? min : max;
         }
 
         return null;
