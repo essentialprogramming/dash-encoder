@@ -161,10 +161,7 @@ public class FileSelector {
 
 
     }
-
-    public List<File> getInputFiles() {
-        return inputFiles;
-    }
+    
 
     public List<Track> getSelectedTracks() {
         return tracks;

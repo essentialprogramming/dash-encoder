@@ -33,8 +33,11 @@ public class DASHEncoder {
                     .withProgramInformations(ProgramInformation.builder()
                             .withMoreInformationURL("https://github.com/essentialprogramming")
                             .build())
-                    .withMinBufferTime(Duration.ofDays(0)
-                            .plusHours(0).plusMinutes(0).plusSeconds(4))
+                    .withMinBufferTime(Duration
+                            .ofDays(0)
+                            .plusHours(0)
+                            .plusMinutes(0)
+                            .plusSeconds(4))
                     .withMediaPresentationDuration(segmentationResult.getPeriod().getDuration())
                     .withProfiles(Profile.MPEG_DASH_ON_DEMAND)
                     .withType(io.mpd.data.PresentationType.STATIC)
