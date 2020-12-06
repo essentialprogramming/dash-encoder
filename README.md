@@ -100,6 +100,28 @@ The indexRange is the range of bytes within this segment that represents the seg
 
 ![MPD model diagram](images/mpd_entities.png)
 
+
+## 💎  MP4 and DASH
+ Mp4 needs to be "fragmented." From ISO BMFF Byte Stream Format §3:
+  # An ISO BMFF initialization segment is defined in this specification as a single File Type Box (ftyp) followed by a single Movie Header Box (moov).
+  
+## HOW TO CHECK IF YOUR MP4 IS PROPERLY FRAGMENTED
+ I highly recommend axiomatic-systems/Bento4 on GitHub.
+
+  $ ./mp4dump ~/Movies/devtools.mp4 | head
+  [ftyp] size=8+28
+    ...
+  [moov] size=8+1109
+    ...
+  [moof] size=8+600
+    ...
+  [mdat] size=8+138679
+  [moof] size=8+536
+    ...
+  [mdat] size=8+24490
+    ...
+  ...
+    ...
 Links:
 ---------------
 
