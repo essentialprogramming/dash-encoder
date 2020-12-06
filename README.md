@@ -105,11 +105,11 @@ The indexRange is the range of bytes within this segment that represents the seg
  Mp4 needs to be "fragmented." From ISO BMFF Byte Stream Format §3:
   ### An ISO BMFF initialization segment is defined in this specification as a single File Type Box (ftyp) followed by a single Movie Header Box (moov).
   
-## HOW TO CHECK IF YOUR MP4 IS PROPERLY FRAGMENTED ?
+## How to check if your mp4 is properly fragmented ?
  I recommend [axiomatic-systems/Bento4](https://github.com/axiomatic-systems/Bento4) on GitHub.
 
   $ ./mp4dump ~/Movies/devtools.mp4 | head
-  `[ftyp] size=8+28  
+  `[ftyp] size=8+28  <br/>
     ...  
   [moov] size=8+1109  
     ...  
