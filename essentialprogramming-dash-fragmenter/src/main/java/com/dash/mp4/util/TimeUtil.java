@@ -1,4 +1,4 @@
-package com.dash.mpd.util;
+package com.dash.mp4.util;
 
 import org.mp4parser.Container;
 import org.mp4parser.boxes.iso14496.part12.EditListBox;

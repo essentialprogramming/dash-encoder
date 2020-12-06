@@ -17,16 +17,20 @@ public class RepresentationUtil {
     public static String getRepresentationId(String trackName) {
         return FilenameUtils.getBaseName(trackName);
     }
-
+    /**
+     *
+       Average bandwidth for the stream (number of bytes divided by duration)
+     */
     public static long getBandwidth(Track track) {
         long size = 0;
         List<Sample> samples = track.getSamples();
         int increment = samples.size() / Math.min(samples.size(), 10000);
-        int sampleSize = 1; // start with one so that we never get into a divided by zero situation
+        int sampleSize = 0;
         for (int i = 0; i < (samples.size() - increment); i += increment) {
             size += samples.get(i).getSize();
             sampleSize++;
         }
+        sampleSize = sampleSize > 0 ? sampleSize : 1; // avoid division by zero
         size = (size / sampleSize) * track.getSamples().size();
 
         double duration = (double) track.getDuration() / track.getTrackMetaData().getTimescale();
@@ -34,12 +38,10 @@ public class RepresentationUtil {
     }
 
     public static long getWidth(Track track) {
-
         return (long) track.getTrackMetaData().getWidth();
     }
 
     public static long getHeight(Track track) {
-
         return (long) track.getTrackMetaData().getHeight();
     }
 
@@ -65,11 +67,10 @@ public class RepresentationUtil {
 
     public static FrameRate getFrameRate(Track track) {
         double framesPerSecond = (double) (track.getSamples().size() * track.getTrackMetaData().getTimescale()) / track.getDuration();
-
-        return convertFramerate(framesPerSecond);
+        return convertFrameRate(framesPerSecond);
     }
 
-    private static FrameRate convertFramerate(double vRate) {
+    private static FrameRate convertFrameRate(double vRate) {
         Fraction f1 = Fraction.getFraction((int) (vRate * 1001), 1001);
         Fraction f2 = Fraction.getFraction((int) (vRate * 1000), 1000);
         double d1 = Math.abs(f1.doubleValue() - vRate);
@@ -81,6 +82,5 @@ public class RepresentationUtil {
 
         }
     }
-
 
 }

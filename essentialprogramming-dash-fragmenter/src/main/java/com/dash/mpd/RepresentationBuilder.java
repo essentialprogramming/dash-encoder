@@ -17,7 +17,7 @@ import java.util.List;
 
 public class RepresentationBuilder {
 
-    public static Representation buildVideoRepresentation(Track track, Mp4Representation rb) {
+    public static Representation buildVideoRepresentation(Track track, Mp4Representation mp4Representation) {
 
         return Representation.builder()
                 .withId(RepresentationUtil.getRepresentationId(track.getName()))
@@ -29,10 +29,10 @@ public class RepresentationBuilder {
                 .withFrameRate(RepresentationUtil.getFrameRate(track))
                 .withSegmentBase(
                         SegmentBase.builder()
-                                .withTimescale(SegmentBaseUtil.getSegmentBaseTimescale(rb))
+                                .withTimescale(SegmentBaseUtil.getSegmentBaseTimescale(mp4Representation))
                                 .withIndexRangeExact(true)
-                                .withIndexRange(SegmentBaseUtil.getSegmentBaseIndexRange(rb))
-                                .withInitialization(SegmentBaseUtil.getSegmentBaseInitialization(rb, MPDGenerator.getBaseUrlValue(track.getName())))
+                                .withIndexRange(SegmentBaseUtil.getSegmentBaseIndexRange(mp4Representation))
+                                .withInitialization(SegmentBaseUtil.getSegmentBaseInitialization(mp4Representation, MPDGenerator.getBaseUrlValue(track.getName())))
                                 .build())
                 .build();
     }

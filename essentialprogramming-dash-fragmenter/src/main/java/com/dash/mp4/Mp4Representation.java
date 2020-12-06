@@ -1,7 +1,7 @@
 package com.dash.mp4;
 
 import com.dash.mp4.util.SapHelper;
-import com.dash.mpd.util.TimeUtil;
+import com.dash.mp4.util.TimeUtil;
 import org.mp4parser.*;
 import org.mp4parser.boxes.iso14496.part12.*;
 import org.mp4parser.boxes.iso23001.part7.CencSampleAuxiliaryDataFormat;
@@ -23,6 +23,8 @@ import org.mp4parser.tools.Path;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.mp4parser.tools.CastUtils.l2i;
@@ -30,7 +32,7 @@ import static org.mp4parser.tools.CastUtils.l2i;
 public class Mp4Representation extends AbstractList<Container> {
     protected Track track;
     protected final List<ProtectionSystemSpecificHeaderBox> psshs;
-    protected Date date = new Date();
+    protected Date date = Date.from(Instant.now());
     protected String source;
     protected long[] segmentStartSamples;
     protected long[] fragmentStartSamples;

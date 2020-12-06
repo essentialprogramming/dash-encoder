@@ -42,7 +42,7 @@ public class DashSegmentationService {
         Fragmenter videoFragmenter = new DefaultFragmenterImpl(MIN_VIDEO_SEGMENT_DURATION);
         Fragmenter audioFragmenter = new DefaultFragmenterImpl(MIN_AUDIO_SEGMENT_DURATION);
 
-        List<Representation> audioRepresentations =  new ArrayList<>();
+        List<Representation> audioRepresentations = Collections.emptyList();
         List<Representation> videoRepresentations = new LinkedList<>();
 
         Duration lastDuration = java.time.Duration.ofNanos(0);
@@ -63,8 +63,8 @@ public class DashSegmentationService {
                 }
             }
             for (Track track : getTrack(tracks, "dtsl", "dtse", "ec-3", "ac-3", "mlpa", "mp4a")) {
-                long[] fragStartSamples = audioFragmenter.sampleNumbers(track);
-                Mp4Representation mp4Representation = new Mp4Representation(track, null, "audio", fragStartSamples, fragStartSamples);
+                long[] fragments = audioFragmenter.sampleNumbers(track);
+                Mp4Representation mp4Representation = new Mp4Representation(track, null, "audio", fragments, fragments);
                 audioRepresentations = RepresentationBuilder.buildAudioRepresentation(track,mp4Representation);
                 lastDuration = updateDuration((double) track.getDuration() / track.getTrackMetaData().getTimescale());
                 totalSize += Mp4Writer.writeOnDemand(mp4Representation, audioRepresentations.get(0), outputDirectory);
