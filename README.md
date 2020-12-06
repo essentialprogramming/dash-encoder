@@ -109,7 +109,7 @@ The indexRange is the range of bytes within this segment that represents the seg
  I recommend [axiomatic-systems/Bento4](https://github.com/axiomatic-systems/Bento4) on GitHub.
 
   $ ./mp4dump ~/Movies/devtools.mp4 | head
-  `[ftyp] size=8+28  <br/>
+  [ftyp] size=8+28  
     ...  
   [moov] size=8+1109  
     ...  
@@ -122,7 +122,7 @@ The indexRange is the range of bytes within this segment that represents the seg
     ...  
   ...  
   ...  
-   `
+   
     
 Links:
 ---------------
