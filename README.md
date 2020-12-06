@@ -126,6 +126,23 @@ You'll also notice multiple moof/mdat pairs.
      ...  
   ...   
   </pre>
+  
+ ## 💎 MP4: Fragmentation, segmentation, splitting and interleaving
+ Segmentation (dash) is the process of creating segments, parts of an original file meant for
+individual/separate HTTP download.
+
+A segment can be a part of a big file or a separate file. It is not specific to the MP4 file format.
+
+Fragmentation is an optional process applicable to the MP4 file format. The process consists in using Movie Fragments. Movie
+Fragments is a tool introduced in the ISO to improve recording of long-running sequences and that is
+now used for HTTP streaming.
+
+Interleaving  is when groups of samples of different tracks are stored alternatively in the file.
+e.g. N milliseconds of video samples, followed by N milliseconds of audio samples, followed by N
+milliseconds of video samples Typically, interleaved samples are grouped within an interleaving
+window. Interleaving reduces disk accesses, playback buffer requirements and enables progressive
+download and playback. 
+    
     
 Links:
 ---------------
