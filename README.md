@@ -111,7 +111,7 @@ You'll also notice multiple moof/mdat pairs.
 ## How to check if your mp4 is properly fragmented ?
  I recommend [axiomatic-systems/Bento4](https://github.com/axiomatic-systems/Bento4) on GitHub.
 
-  $ ./mp4dump ~/Movies/devtools.mp4 | head  
+  $ ./mp4dump ~/Movies/trailer.mp4 | head  
   <pre>
       [ftyp] size=8+28  
         ...  
