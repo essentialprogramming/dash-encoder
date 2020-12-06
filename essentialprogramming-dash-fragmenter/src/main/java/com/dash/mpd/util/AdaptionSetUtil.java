@@ -2,6 +2,7 @@ package com.dash.mpd.util;
 
 import io.mpd.data.FrameRate;
 import io.mpd.data.Representation;
+import org.apache.commons.lang.math.Fraction;
 
 import java.util.List;
 import java.util.function.Function;
@@ -9,15 +10,13 @@ import java.util.function.Function;
 public class AdaptionSetUtil {
 
     public static long adjustMin(List<Representation> representations, Function<Representation, Long> get) {
-        Long min = adjustMinMax(representations, get, true);
-        if (min != null) return min;
-        return 0;
+        final Long min = adjustMinMax(representations, get, true);
+        return min != null ? min : 0;
     }
 
     public static long adjustMax(List<Representation> representations, Function<Representation, Long> get) {
-        Long max = adjustMinMax(representations, get, false);
-        if (max != null) return max;
-        return 10000;
+        final Long max = adjustMinMax(representations, get, false);
+        return max != null ? max : 10000;
     }
 
     private static Long adjustMinMax(List<Representation> representations, Function<Representation, Long> get, boolean needMinimum) {
@@ -37,70 +36,42 @@ public class AdaptionSetUtil {
     }
 
 
-
-    public static FrameRate adjustAdaptationSetFrameRate(List<Representation> representations, Function<Representation, Object> get) {
-        Object v = null;
-        for (Representation representationType : representations) {
-            Object _v = get.apply(representationType);
-            if (_v == null) {
-                return null; // no need to move it around when it doesn't exist
+    public static FrameRate adjustAdaptationSetFrameRate(List<Representation> representations) {
+        FrameRate finalFrameRate = null;
+        for (Representation representation : representations) {
+            FrameRate frameRate = representation.getFrameRate();
+            if (frameRate == null) {
+                return null;
             }
-            if (v == null || v.equals(_v)) {
-                v = _v;
+            if (finalFrameRate == null || finalFrameRate.equals(frameRate)) {
+                finalFrameRate = frameRate;
             } else {
                 return null;
             }
-            representationType.setFrameRate(null);
+            representation.setFrameRate(null);
         }
-        return (FrameRate) v;
+        return finalFrameRate;
     }
 
-   /* TODO : method that could be used for adding extra content protection (not needed in current scenario)
-   public static void optimizeContentProtection(AdaptationSetType parent) {
-        List<DescriptorType> contentProtection = new ArrayList<>();
-        for (RepresentationBaseType representationType : parent.getRepresentation()) {
-            if (contentProtection.isEmpty()) {
-                contentProtection.addAll(representationType.getContentProtection());
-            } else {
-                List<DescriptorType> currentCP = representationType.getContentProtection();
-                if (contentProtection.size() == currentCP.size()) {
-                    for (int i = 0; i < currentCP.size(); i++) {
-                        DescriptorType a = currentCP.get(i);
-                        DescriptorType b = contentProtection.get(i);
-                        if (!(Objects.equals(a.getValue(), b.getValue()) && Objects.equals(a.getSchemeIdUri(), b.getSchemeIdUri()) && Objects.equals(a.getId(), b.getId()))) {
-                            return;
-                        }
 
-                    }
-                }
-            }
-        }
-        if (!contentProtection.isEmpty()) {
-            for (RepresentationBaseType representationType : parent.getRepresentation()) {
-                representationType.getContentProtection().clear();
-            }
-            parent.getContentProtection().addAll(contentProtection);
-        }
-
-    }*/
-
-
-   /* TODO : method that could be used for adding extra minFrameRate and maxFrameRate attributes on Adaptation
-            in current scenario we dont add minFrameRate and maxFrameRate on adaption set
-   public static FrameRate adjustMinMaxFrameRate(List<Representation> representations) {
+    public static FrameRate adjustMinMaxFrameRate(List<Representation> representations, boolean needMinimum) {
         Fraction min = null, max = null;
-        for (Representation representationType : representations) {
-            FrameRate frameRate = representationType.getFrameRate();
-            if (frameRate.toString() != null) {
-                Fraction f = Fraction.getFraction(frameRate.toString());
+        for (Representation representation : representations) {
+            FrameRate frameRate = representation.getFrameRate();
+            if (frameRate != null) {
+                Fraction fraction = Fraction.getFraction(Math.toIntExact(frameRate.getNumerator()),
+                        Math.toIntExact(frameRate.getDenominator()));
 
-                min = min == null || f.compareTo(min) < 0 ? f : min;
-                max = max == null || f.compareTo(max) > 0 ? f : max;
+                min = min == null || fraction.compareTo(min) < 0 ? fraction : min;
+                max = max == null || fraction.compareTo(max) > 0 ? fraction : max;
             }
         }
-        if (max != null && !min.equals(max)) { // min/max doesn't make sense when both values are the same
-            return new FrameRate((long) min.doubleValue(), (long) max.doubleValue());
+        // when both values are the same there is no need to set min/max frame rates
+        if (min != null && !min.equals(max)) {
+            FrameRate minFrameRate = new FrameRate(Long.parseLong(min.toString().split("/")[0]), Long.valueOf(min.toString().split("/")[1]));
+            FrameRate maxFrameRate = new FrameRate(Long.parseLong(max.toString().split("/")[0]), Long.valueOf(max.toString().split("/")[1]));
+            return needMinimum ? minFrameRate : maxFrameRate;
         }
-        return  null;
-    }*/
+        return null;
+    }
 }
