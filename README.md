@@ -106,9 +106,15 @@ The indexRange is the range of bytes within this segment that represents the seg
 
 
 ## 💎  MP4 and DASH
- Mp4 needs to be "fragmented." From ISO BMFF Byte Stream Format §3:
+ Mp4 needs to be "fragmented." 
+ 
+ ### Fragmented MP4
+ Fragmented mp4 file structure shortly can be described as:
+
+`ftyp   moov     [moof mdat+]+    mfra`
+
   ### An ISO BMFF initialization segment is defined in this specification as a single File Type Box (ftyp) followed by a single Movie Header Box (moov).
-   <pre>...ftype followed by a single moov... </pre>
+   <pre>...ftyp followed by a single moov... </pre>
 
 You'll also notice multiple moof/mdat pairs.
   
