@@ -70,6 +70,10 @@ ffmpeg -i trailer.mp4 -c:a aac -b:a 128k -vn input_audio_128k.mp4
 
 At a very high level, an MPEG DASH presentation consists of an initial XML manfifest, called the Media Presentation Document (MPD for short), which describes media segments that form a complete presentation. Along with a number of attributes, the MPD allows the MPEG DASH player to compute the URL of each segment, and to download it and render it.
 
+## The Manifest File (MPD)
+
+The MPD consists of four major components, namely Periods, Adaptation Sets, Representations and Segments. 
+
 ##  Periods
 Periods, contained in the top-level MPD element, describe a part of the content with a start time and duration. Multiple Periods can be used for scenes or chapters, or to separate ads from program content.
 
