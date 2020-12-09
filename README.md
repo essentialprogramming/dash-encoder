@@ -161,5 +161,6 @@ Links:
 * [MP4](https://www.sciencedirect.com/science/article/pii/S1742287614000140#tbl2)
 * [Elements of the H.264 Video/AAC Audio](https://www.cimarronsystems.com/wp-content/uploads/2017/04/Elements-of-the-H.264-VideoAAC-Audio-MP4-Movie-v2_0.pdf)
 * [HEVC (H.265) Vs. AVC (H.264) - What’s The Difference?](https://www.boxcast.com/blog/hevc-h.265-vs.-h.264-avc-whats-the-difference)
+* [Thumbnails](http://reference.dashif.org/dash.js/latest/samples/thumbnails/thumbnails.html)
 
 
