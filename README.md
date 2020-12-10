@@ -70,6 +70,10 @@ ffmpeg -i trailer.mp4 -c:a aac -b:a 128k -vn input_audio_128k.mp4
 
 At a very high level, an MPEG DASH presentation consists of an initial XML manfifest, called the Media Presentation Document (MPD for short), which describes media segments that form a complete presentation. Along with a number of attributes, the MPD allows the MPEG DASH player to compute the URL of each segment, and to download it and render it.
 
+## The Manifest File (MPD)
+
+The MPD consists of four major components, namely Periods, Adaptation Sets, Representations and Segments. 
+
 ##  Periods
 Periods, contained in the top-level MPD element, describe a part of the content with a start time and duration. Multiple Periods can be used for scenes or chapters, or to separate ads from program content.
 
@@ -100,6 +104,56 @@ The indexRange is the range of bytes within this segment that represents the seg
 
 ![MPD model diagram](images/mpd_entities.png)
 
+
+## 💎  MP4 and DASH
+ Mp4 needs to be "fragmented." 
+ 
+ ### Fragmented MP4
+ Fragmented mp4 file structure shortly can be described as:
+
+`ftyp   moov     [moof mdat+]+    mfra`
+
+  ### An ISO BMFF initialization segment is defined in this specification as a single File Type Box (ftyp) followed by a single Movie Header Box (moov).
+   <pre>...ftyp followed by a single moov... </pre>
+
+You'll also notice multiple moof/mdat pairs.
+  
+## How to check if your mp4 is properly fragmented ?
+ I recommend [axiomatic-systems/Bento4](https://github.com/axiomatic-systems/Bento4) on GitHub.
+
+  $ ./mp4dump ~/Movies/trailer.mp4 | head  
+  <pre>
+      [ftyp] size=8+28  
+        ...  
+      [moov] size=8+1109  
+        ...  
+      [moof] size=8+600  
+        ...  
+      [mdat] size=8+138679  
+      [moof] size=8+536  
+        ...  
+      [mdat] size=8+24490  
+     ...  
+  ...   
+  </pre>
+  
+ ## 💎 MP4: Fragmentation, segmentation, splitting and interleaving
+ Segmentation (dash) is the process of creating segments, parts of an original file meant for
+individual/separate HTTP download.
+
+A segment can be a part of a big file or a separate file. It is not specific to the MP4 file format.
+
+Fragmentation is an optional process applicable to the MP4 file format. The process consists in using Movie Fragments. Movie
+Fragments is a tool introduced in the ISO to improve recording of long-running sequences and that is
+now used for HTTP streaming.
+
+Interleaving  is when groups of samples of different tracks are stored alternatively in the file.
+e.g. N milliseconds of video samples, followed by N milliseconds of audio samples, followed by N
+milliseconds of video samples Typically, interleaved samples are grouped within an interleaving
+window. Interleaving reduces disk accesses, playback buffer requirements and enables progressive
+download and playback. 
+    
+    
 Links:
 ---------------
 
@@ -107,5 +161,6 @@ Links:
 * [MP4](https://www.sciencedirect.com/science/article/pii/S1742287614000140#tbl2)
 * [Elements of the H.264 Video/AAC Audio](https://www.cimarronsystems.com/wp-content/uploads/2017/04/Elements-of-the-H.264-VideoAAC-Audio-MP4-Movie-v2_0.pdf)
 * [HEVC (H.265) Vs. AVC (H.264) - What’s The Difference?](https://www.boxcast.com/blog/hevc-h.265-vs.-h.264-avc-whats-the-difference)
+* [Thumbnails](http://reference.dashif.org/dash.js/latest/samples/thumbnails/thumbnails.html)
 
 
