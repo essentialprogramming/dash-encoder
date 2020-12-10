@@ -1,6 +1,6 @@
 package com.dash.mp4;
 
-import com.dash.mp4.util.SapHelper;
+import com.dash.mp4.util.SapUtil;
 import com.dash.mp4.util.TimeUtil;
 import org.mp4parser.*;
 import org.mp4parser.boxes.iso14496.part12.*;
@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.mp4parser.tools.CastUtils.l2i;
@@ -360,7 +359,7 @@ public class Mp4Representation extends AbstractList<Container> {
             entry.setReferencedSize(size);
             TrackRunBox trackRunBox = Path.getPath(moof, "traf[0]/trun[0]");
             ptss = TimeUtil.getPtss(trackRunBox);
-            entry.setSapType(SapHelper.getFirstFrameSapType(ptss, SapHelper.getSampleFlags(0, trackRunBox, trackExtendsBox)));
+            entry.setSapType(SapUtil.getFirstFrameSapType(ptss, SapUtil.getSampleFlags(0, trackRunBox, trackExtendsBox)));
             entry.setSubsegmentDuration(TimeUtil.getDuration(Path.getPath(moof, "traf[0]/trun[0]")));
             entry.setStartsWithSap((byte) 1); // we know it - no need to lookup
         }

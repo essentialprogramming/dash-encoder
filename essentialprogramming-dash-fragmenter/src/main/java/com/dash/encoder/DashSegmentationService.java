@@ -55,7 +55,7 @@ public class DashSegmentationService {
             if (hasTrack(tracks, "hvc1", "hev1", "avc1", "avc3")) {
                 for (Track track : getTrack(tracks, "hvc1", "hev1", "avc1", "avc3")) {
                     long[] fragments = videoFragmenter.sampleNumbers(track);
-                    Mp4Representation mp4Representation = new Mp4Representation(track, null, "", fragments, fragments);
+                    Mp4Representation mp4Representation = new Mp4Representation(track, null, "video", fragments, fragments);
                     Representation videoRepresentation = RepresentationBuilder.buildVideoRepresentation(track, mp4Representation);
                     totalSize += Mp4Writer.writeOnDemand(mp4Representation, videoRepresentation, outputDirectory);
 

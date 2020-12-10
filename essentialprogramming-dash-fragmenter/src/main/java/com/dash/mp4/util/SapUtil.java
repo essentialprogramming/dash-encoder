@@ -6,7 +6,7 @@ import org.mp4parser.boxes.iso14496.part12.TrackRunBox;
 
 import java.util.Arrays;
 
-public class SapHelper {
+public class SapUtil {
 
     public static byte getFirstFrameSapType(long[] ptss, SampleFlags sapSampleFlags) {
         // I_SAP, T_SAP, I_SAU, T_DEC, T_EPT,  T_PTF
