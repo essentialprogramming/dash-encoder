@@ -23,7 +23,7 @@
                 </button>
             </form>
             <div id='file-list-display'></div>
-            <button type="submit" onclick="fragment()">Fragment</button>
+            <button type="submit" onclick="fragment()">DASH Encode</button>
             <h4 id='message' style="color: orange"></h4>
         </div>
     </div>
@@ -48,22 +48,13 @@
         let formData = new FormData();
         formData.set('file', file);
 
-        let promise = new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             let request = new XMLHttpRequest();
             request.open("POST", 'api/dash/upload/file');
             request.onload = (response) => resolve(response.currentTarget.responseText);
             request.onerror = () => reject(request.statusText);
             request.send(formData);
         });
-        promise
-            .then(responseText => {
-                let json = JSON.parse(responseText);
-                let message = document.getElementById('message');
-                message.innerText = json.status
-            })
-            .catch(function(error) {
-                console.log(error);
-            });
     };
 
 
@@ -77,9 +68,20 @@
 
         fileCatcher.addEventListener('submit', function (event) {
             event.preventDefault();
+            let promiseList = [];
             fileList.forEach(function (file) {
-                sendFile(file);
+                promiseList.push(sendFile(file));
             });
+            const allPromises = Promise.all(promiseList);
+            allPromises
+                .then(response => {
+                    let json = JSON.parse(response[0]);
+                    let message = document.getElementById('message');
+                    message.innerText = json.status
+                })
+                .catch(function(error) {
+                    console.log(error);
+                });
         });
 
         fileInput.addEventListener('change', function (event) {
