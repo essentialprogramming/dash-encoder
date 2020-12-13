@@ -42,6 +42,7 @@ public class RepresentationUtil {
     }
 
     public static long getHeight(Track track) {
+
         return (long) track.getTrackMetaData().getHeight();
     }
 
