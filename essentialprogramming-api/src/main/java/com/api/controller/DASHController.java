@@ -12,9 +12,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.io.*;
-import java.util.List;
-import java.util.Queue;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 @Path("/dash/")
 public class DASHController {
@@ -43,22 +41,17 @@ public class DASHController {
     @Path("fragment")
     @Produces(MediaType.APPLICATION_JSON)
     public JsonResponse fragment() {
-        Queue<String> fileList = uploadService.getList();
-        List<FileSelector> fileSelectors = createFileSelectors(fileList);
+        FileSelector fileSelector = createFileSelector("videos-submitted/*.mp4");
 
-        DASHEncoder dashEncoder = new DASHEncoder(fileSelectors);
+        DASHEncoder dashEncoder = new DASHEncoder(Collections.singletonList(fileSelector));
         dashEncoder.encode();
         return new JsonResponse()
-                .with("status", "File(s) successfully fragmented.")
+                .with("status", "File(s) successfully segmented.")
                 .done();
     }
 
-    public List<FileSelector> createFileSelectors(Queue<String> inputStreams) {
-        return inputStreams.stream().map(this::createFileSelector).collect(Collectors.toList());
-    }
-
     @SneakyThrows
-    private FileSelector createFileSelector(String file)  {
-        return new FileSelector(file);
+    private static FileSelector createFileSelector(String path)  {
+        return new FileSelector(path);
     }
 }
