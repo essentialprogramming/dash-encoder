@@ -1,5 +1,6 @@
 package com.util.io;
 
+import com.util.text.StringUtils;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,49 +12,51 @@ import java.net.URL;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 public class FileUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
-    public static List<File> getFiles(File base, String pattern) {
-        Path path = Paths.get(pattern);
-        List<Path> filePaths;
-        List<String> segments = new ArrayList<>(Arrays.asList(pattern.split(Pattern.quote(File.separator))));
+    public static List<File> getFiles(String basePath, String pattern) {
+        Path path = Paths.get(basePath);
         if (path.isAbsolute()) {
-            Path absStart = Paths.get(segments.remove(0) + File.separator);
-            assert Files.isDirectory(absStart);
-            filePaths = Collections.singletonList(absStart);
+            assert Files.isDirectory(path);
         } else {
+            File base = new File("");
             assert base.isDirectory();
-            filePaths = Collections.singletonList(base.getAbsoluteFile().toPath());
-        }
-        while (!segments.isEmpty()) {
-            String segment = segments.remove(0);
-            ArrayList<Path> pathArrayList = new ArrayList<>();
-
-            for (Path folder : filePaths) {
-                PathMatcher matcher = FileSystems.getDefault()
-                        .getPathMatcher("glob:" + segment);
-                if (Files.isDirectory(folder)) {
-                    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folder)) {
-                        for (Path filePath : directoryStream) {
-                            if (matcher.matches(filePath.getFileName())) {
-                                pathArrayList.add(filePath);
-                            }
-                        }
-                    } catch (IOException ex) {
-                        logger.error("", ex);
-                    }
-
-                }
+            path = base.getAbsoluteFile().toPath();
+            if (StringUtils.isNotEmpty(basePath)) {
+                path = path.resolve(basePath + File.separator);
             }
-            filePaths = pathArrayList;
         }
+
+        // Support all OS specific file separators
+        pattern = String.join(File.separator, pattern.split("/"));
+        List<String> parts = new ArrayList<>(Arrays.asList(pattern.split(Pattern.quote(File.separator))));
+        parts.removeIf(item -> item == null || "".equals(item));
+
+        while (!parts.isEmpty() && parts.size() > 1) {
+            String segment = parts.remove(0);
+            path = path.resolve(segment + File.separator);
+        }
+        String filePattern = parts.remove(0);
+        List<Path> filePaths ;
+
+        PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + filePattern);
+        try (Stream<Path> walk = Files.walk(path)){
+            filePaths = walk.filter(filePath -> matcher.matches(filePath.getFileName()))
+                    .collect(Collectors.toList());
+
+        } catch (IOException ex) {
+            filePaths = new ArrayList<>();
+            logger.error("", ex);
+        }
+
         List<File> files = new ArrayList<>();
         for (Path filePath : filePaths) {
             files.add(filePath.toFile());
@@ -95,12 +98,13 @@ public class FileUtils {
         return path;
     }
 
-    public static File createFile(String fileName, boolean overwrite){
+    public static File createFile(String fileName, boolean overwrite) {
         return getPath(fileName, overwrite).toFile();
     }
 
 
     public static void main(String[] args) {
-        System.err.println(FileUtils.getFiles(new File(""), "/essentialprogramming/dashencrypt/*/video/*.xml"));
+        System.err.println(FileUtils.getFiles("", "videos-submitted/*.mp4"));
+        System.err.println(FileUtils.getFiles("videos-submitted", "/*.mp4"));
     }
 }
