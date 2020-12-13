@@ -13,10 +13,9 @@ public class TimeUtil {
 
 
     public static long getDuration(TrackRunBox trackRunBox) {
-        long[] ptss = new long[trackRunBox.getEntries().size()];
         long duration = 0;
-        for (int index = 0; index < ptss.length; index++) {
-            duration += trackRunBox.getEntries().get(index).getSampleDuration();
+        for (TrackRunBox.Entry entry : trackRunBox.getEntries()) {
+            duration += entry.getSampleDuration();
         }
         return duration;
     }
@@ -25,11 +24,13 @@ public class TimeUtil {
 
     public static long[] getPtss(TrackRunBox trackRunBox) {
         long currentTime = 0;
+        int sampleNum = 0;
         long[] ptss = new long[trackRunBox.getEntries().size()];
-        for (int j = 0; j < ptss.length; j++) {
-            ptss[j] = currentTime + trackRunBox.getEntries().get(j).getSampleCompositionTimeOffset();
-            currentTime += trackRunBox.getEntries().get(j).getSampleDuration();
+        for (TrackRunBox.Entry entry : trackRunBox.getEntries()) {
+            ptss[sampleNum++] = currentTime + entry.getSampleCompositionTimeOffset();
+            currentTime += entry.getSampleDuration();
         }
+
         return ptss;
     }
 

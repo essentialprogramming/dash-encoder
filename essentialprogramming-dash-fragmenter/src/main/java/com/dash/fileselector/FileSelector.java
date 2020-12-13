@@ -3,6 +3,7 @@ package com.dash.fileselector;
 
 import com.util.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.mp4parser.IsoFile;
 import org.mp4parser.boxes.iso14496.part12.TrackBox;
 import org.mp4parser.muxer.FileDataSourceImpl;
@@ -15,9 +16,7 @@ import org.mp4parser.muxer.tracks.h265.H265TrackImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,12 +29,9 @@ public class FileSelector {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSelector.class);
 
-    private final List<File> inputFiles;
     private final List<Track> tracks = new ArrayList<>();
     public static final List<Track> TEXT_TRACKS = new ArrayList<>();
     public static final List<Track> THUMB_TRACKS = new ArrayList<>();
-
-
 
 
     private static final Set<String> MP4_FILE_EXTENSIONS = new HashSet<>(Arrays.asList("mp4", "m4a", "m4v", "ismv", "isma", "mov"));
@@ -51,7 +47,7 @@ public class FileSelector {
     static {
 
         for (String extension : MP4_FILE_EXTENSIONS) {
-            allowedInputOptions.put(extension, new HashSet<>(Arrays.asList("type", "lang", "trackNo")));
+            allowedInputOptions.put(extension, new HashSet<>(Arrays.asList("type", "lang")));
             allowedOutputOptions.put(extension, new HashSet<>(Arrays.asList("lang", "period", "role")));
             mandatoryOutputOptions.put(extension, Collections.emptySet());
         }
@@ -88,7 +84,7 @@ public class FileSelector {
     }
 
     public FileSelector(String filePattern, Map<String, String> inputOptions, Map<String, String> outputOptions) throws IOException {
-        this.inputFiles = FileUtils.getFiles(new File(""), filePattern);
+        List<File> inputFiles = FileUtils.getFiles("", filePattern);
         if (inputFiles.isEmpty()) {
             throw new IllegalArgumentException("The file pattern " + filePattern + " doesn't yield any results.");
         }
@@ -105,14 +101,12 @@ public class FileSelector {
             FileSelector.validate(file, inputOptions, outputOptions);
 
             if (MP4_FILE_EXTENSIONS.contains(fileExtension)) {
-                IsoFile isoFile = new IsoFile(file);
+                FileInputStream inputStream = new FileInputStream(file);
+                IsoFile isoFile = new IsoFile(inputStream.getChannel());
                 List<TrackBox> trackBoxes = isoFile.getMovieBox().getBoxes(TrackBox.class);
 
                 String type = inputOptions.get("type");
                 String language = inputOptions.get("lang");
-                String trackNo = inputOptions.get("trackNo");
-
-                int no = 0;
 
                 for (TrackBox trackBox : trackBoxes) {
                     boolean include = true;
@@ -128,20 +122,15 @@ public class FileSelector {
                             include = false;
                         }
                     }
-                    if (trackNo != null) {
-                        if (Integer.parseInt(trackNo) != no) {
-                            LOGGER.info(file.getName() + ": Excluding track " + no + "("+ handler +") as only " + trackNo + " is included");
-                            include = false;
-                        }
-                    }
                     if (include) {
-                        LOGGER.info(file.getName() + ": Selecting track " + no + " (" + handler + ")");
+                        LOGGER.info(file.getName() + ": Selecting track " + "0" + " (" + handler + ")");
                         tracks.add(new Mp4TrackImpl(trackBox.getTrackHeaderBox().getTrackId(), isoFile, new FileRandomAccessSourceImpl(new RandomAccessFile(file, "r")), file.getName()));
                     }
                 }
                 if (tracks.isEmpty()) {
                     throw new IllegalArgumentException("File Extension of " + file + " unknown");
                 }
+                IOUtils.closeQuietly(inputStream);
             } else if (H264_FILE_EXTENSIONS.contains(fileExtension)) {
                 tracks.add(new H264TrackImpl(new FileDataSourceImpl(file)));
             } else if (H265_FILE_EXTENSIONS.contains(fileExtension)) {
