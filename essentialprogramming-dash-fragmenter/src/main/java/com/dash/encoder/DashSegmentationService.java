@@ -45,7 +45,7 @@ public class DashSegmentationService {
         List<Representation> audioRepresentations = Collections.emptyList();
         List<Representation> videoRepresentations = new LinkedList<>();
 
-        Duration minDuration = java.time.Duration.ofNanos(Integer.MAX_VALUE);
+        Duration minDuration = java.time.Duration.ofSeconds(Integer.MAX_VALUE);
         Descriptor audioRoleDescriptor = new Descriptor(null,null);
 
         long totalSize = 0;
@@ -88,7 +88,7 @@ public class DashSegmentationService {
     }
 
     static Duration updateDuration(double duration, Duration lastDuration) {
-        if (duration < lastDuration.getSeconds()) return lastDuration;
+        if (duration > lastDuration.getSeconds()) return lastDuration;
         return Duration.ofDays(0)
                 .plusHours((int) (duration / 3600))
                 .plusMinutes((int) ((duration % 3600) / 60))
