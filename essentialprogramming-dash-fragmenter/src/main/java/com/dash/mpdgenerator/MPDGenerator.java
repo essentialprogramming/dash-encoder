@@ -18,8 +18,8 @@ public class MPDGenerator {
 
     final static MPDParser mpdParser = new MPDParser();
 
-    public static List<BaseURL> getBaseUrlValue(String trackName) {
-        BaseURL baseURL = new BaseURL(BASE_URL_PREFIX + FilenameUtils.getBaseName(trackName));
+    public static List<BaseURL> getBaseUrlValue(String trackName, String type) {
+        BaseURL baseURL = new BaseURL(BASE_URL_PREFIX + FilenameUtils.getBaseName(trackName )+ "_" + type);
         return Collections.singletonList(baseURL);
     }
 

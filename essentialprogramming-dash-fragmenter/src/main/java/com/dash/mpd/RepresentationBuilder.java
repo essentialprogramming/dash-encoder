@@ -25,14 +25,14 @@ public class RepresentationBuilder {
                 .withWidth(RepresentationUtil.getWidth(track))
                 .withHeight(RepresentationUtil.getHeight(track))
                 .withCodecs(RepresentationUtil.getCodecs(track))
-                .withBaseURLs(MPDGenerator.getBaseUrlValue(track.getName()))
+                .withBaseURLs(MPDGenerator.getBaseUrlValue(track.getName(), "video"))
                 .withFrameRate(RepresentationUtil.getFrameRate(track))
                 .withSegmentBase(
                         SegmentBase.builder()
                                 .withTimescale(SegmentBaseUtil.getSegmentBaseTimescale(mp4Representation))
                                 .withIndexRangeExact(true)
                                 .withIndexRange(SegmentBaseUtil.getSegmentBaseIndexRange(mp4Representation))
-                                .withInitialization(SegmentBaseUtil.getSegmentBaseInitialization(mp4Representation, MPDGenerator.getBaseUrlValue(track.getName())))
+                                .withInitialization(SegmentBaseUtil.getSegmentBaseInitialization(mp4Representation, MPDGenerator.getBaseUrlValue(track.getName(), "video")))
                                 .build())
                 .build();
     }
@@ -66,14 +66,14 @@ public class RepresentationBuilder {
                 .withCodecs(RepresentationUtil.getCodecs(track))
                 .withAudioSamplingRate("" + DashHelper.getAudioSamplingRate(audioSample))
                 .withBandwidth(RepresentationUtil.getBandwidth(track))
-                .withBaseURLs(MPDGenerator.getBaseUrlValue(RepresentationUtil.getRepresentationId(track.getName()) + ".mp4"))
+                .withBaseURLs(MPDGenerator.getBaseUrlValue(RepresentationUtil.getRepresentationId(track.getName()) + ".mp4", "audio"))
                 .withAudioChannelConfigurations(audioChannelConfigurations)
                 .withSegmentBase(
                         SegmentBase.builder()
                                 .withTimescale(SegmentBaseUtil.getSegmentBaseTimescale(mp4Representation))
                                 .withIndexRangeExact(true)
                                 .withIndexRange(SegmentBaseUtil.getSegmentBaseIndexRange(mp4Representation))
-                                .withInitialization(SegmentBaseUtil.getSegmentBaseInitialization(mp4Representation, MPDGenerator.getBaseUrlValue(track.getName())))
+                                .withInitialization(SegmentBaseUtil.getSegmentBaseInitialization(mp4Representation, MPDGenerator.getBaseUrlValue(track.getName(),"audio")))
                                 .build())
                 .build();
     }
